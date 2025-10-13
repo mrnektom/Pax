@@ -1,0 +1,37 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+  postgres:
+    image: timescale/timescaledb:latest-pg15
+    restart: always
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: qwerty
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    restart: always
+    environment:
+      MEILI_MASTER_KEY: qwerty
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_db:/meili_data
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+volumes:
+  postgres_db: {}
+  meilisearch_db: {}
+

@@ -1,0 +1,23 @@
+ktor:
+  application:
+    modules:
+      - org.pax.messenger.ApplicationKt.module
+  deployment:
+    port: 8080
+
+database:
+  url: $POSTGRES_URL
+  username: $POSTGRES_USERNAME
+  password: $POSTGRES_PASSWORD
+
+mail:
+#  from: $MAIL_FROM
+#  link-templates:
+#    registration: $MAIL_REGISTRATION_TEMPLATE
+#    password-reset: $MAIL_PASSWORD_RESET_TEMPLATE
+#    email-confirmation: $MAIL_CONFIRMATION_TEMPLATE
+#  smtp:
+#    host: $SMTP_HOST
+#    port: $SMTP_PORT
+#    username: $SMTP_USERNAME
+#    password: $SMTP_PASSWORD
