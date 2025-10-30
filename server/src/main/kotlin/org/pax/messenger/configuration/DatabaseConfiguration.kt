@@ -6,7 +6,6 @@ import io.ktor.server.application.*
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
-import org.koin.core.logger.Level
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import javax.sql.DataSource
@@ -14,7 +13,6 @@ import kotlin.system.exitProcess
 
 fun Module.configureDatabase() {
     single {
-
         val configuration = get<ApplicationEnvironment>().config.let { config ->
             HikariConfig().apply {
                 jdbcUrl = config.property("database.url").getString()

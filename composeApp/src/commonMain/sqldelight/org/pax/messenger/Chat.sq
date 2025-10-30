@@ -1,0 +1,17 @@
+import kotlin.uuid.Uuid;
+import org.pax.messenger.model.enumerated.ChatType;
+
+CREATE TABLE Chats (
+    id BLOB AS Uuid PRIMARY KEY,
+    type TEXT AS ChatType,
+    name TEXT NOT NULL,
+    picture TEXT NOT NULL,
+    description TEXT NOT NULL,
+    linkName TEXT DEFAULT NULL
+);
+
+getAllChats:
+SELECT * FROM Chats;
+
+getById:
+SELECT * FROM Chats WHERE id=?;

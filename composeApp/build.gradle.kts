@@ -8,33 +8,41 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.sqldelight)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
+    compilerOptions {
+        optIn.add("kotlin.uuid.ExperimentalUuidApi")
+    }
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
-    jvm()
-    
+
+    jvm("desktop")
+
     js {
         browser()
         binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android.driver)
+            implementation(libs.activity.compose)
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -44,15 +52,38 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.sqldelight.coroutines)
+            api(libs.koin.annotations)
+            implementation(libs.koin.compose.viewmodel)
             implementation(projects.shared)
+
+
+            implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha11")
+            implementation("org.jetbrains.androidx.navigationevent:navigationevent-compose:1.0.0-alpha01")
+//            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.5")
+
+            implementation("androidx.collection:collection:1.5.0")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.10.0-alpha03")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jvmMain.dependencies {
+
+        named("desktopMain").dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.sqldelight.sqlite.driver)
         }
+
+        webMain.dependencies {
+            implementation(libs.sqldelight.web.driver)
+            implementation(npm("@cashapp/sqldelight-sqljs-worker", "2.1.0"))
+            implementation(npm("sql.js", "1.8.0"))
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
+        }
+    }
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
     }
 }
 
@@ -83,8 +114,22 @@ android {
     }
 }
 
+ksp {
+    arg("KOIN_CONFIG_CHECK", "true")
+}
+
 dependencies {
+    add("kspCommonMainMetadata", libs.koin.ksp)
+    add("kspDesktop", libs.koin.ksp)
+    add("kspAndroid", libs.koin.ksp)
+    add("kspJs", libs.koin.ksp)
+    add("kspWasmJs", libs.koin.ksp)
+
     debugImplementation(compose.uiTooling)
+}
+
+tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMetadata" }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
 }
 
 compose.desktop {
@@ -95,6 +140,15 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.pax.messenger"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("org.pax.messenger")
+            generateAsync = true
         }
     }
 }
