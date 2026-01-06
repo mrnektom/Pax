@@ -1,0 +1,12 @@
+import kotlin.uuid.Uuid;
+
+CREATE TABLE Account (
+  id            BLOB AS Uuid PRIMARY KEY,
+  accessToken  TEXT         NOT NULL,
+  refreshToken TEXT         NOT NULL,
+  expiredAt    TEXT         NOT NULL,
+  host          TEXT         NOT NULL
+);
+
+
+findAll: SELECT * FROM Account;

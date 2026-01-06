@@ -1,4 +1,4 @@
-package org.pax.messenger.navigation
+package org.pax.messenger.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

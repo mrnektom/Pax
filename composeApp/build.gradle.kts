@@ -7,20 +7,17 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.composeHotReload)
+//    alias(libs.plugins.composeHotReload)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
 }
 
 kotlin {
+    jvmToolchain(21)
     compilerOptions {
         optIn.add("kotlin.uuid.ExperimentalUuidApi")
     }
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
+    androidTarget()
 
     jvm("desktop")
 
@@ -36,27 +33,28 @@ kotlin {
     }
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.sqldelight.android.driver)
-            implementation(libs.activity.compose)
-        }
-
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.sqldelight.coroutines)
-            api(libs.koin.annotations)
-            implementation(libs.koin.compose.viewmodel)
             implementation(projects.shared)
 
+            implementation(compose.runtime)
+            implementation(compose.ui)
+            implementation(compose.material3)
+            implementation(compose.foundation)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.androidx.lifecycle.viewmodelCompose)
+
+            implementation(libs.sqldelight.coroutines)
+
+            api(libs.koin.annotations)
+            implementation(libs.koin.compose.viewmodel)
+
+            implementation(ktorLibs.client.cio)
+            implementation(ktorLibs.client.auth)
+            implementation(ktorLibs.client.contentNegotiation)
+            implementation(ktorLibs.serialization.kotlinx.json)
 
             implementation("androidx.navigation3:navigation3-runtime:1.0.0-alpha11")
             implementation("org.jetbrains.androidx.navigationevent:navigationevent-compose:1.0.0-alpha01")
@@ -65,6 +63,14 @@ kotlin {
             implementation("androidx.collection:collection:1.5.0")
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.10.0-alpha03")
         }
+
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android.driver)
+            implementation(libs.activity.compose)
+        }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
@@ -116,6 +122,7 @@ android {
 
 ksp {
     arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
 }
 
 dependencies {

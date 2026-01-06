@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "Pax"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -25,6 +27,12 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+    }
+
+    versionCatalogs {
+        create("ktorLibs") {
+            from("io.ktor:ktor-version-catalog:3.3.3")
+        }
     }
 }
 

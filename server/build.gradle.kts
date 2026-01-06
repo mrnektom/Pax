@@ -23,11 +23,13 @@ kotlin {
 dependencies {
     implementation(projects.shared)
     implementation(libs.logback)
-    implementation(libs.ktor.serverCore)
-    implementation(libs.ktor.serialization.jackson)
-    implementation(libs.ktor.serverNetty)
-    implementation("io.ktor:ktor-server-config-yaml")
-    implementation("io.ktor:ktor-server-content-negotiation")
+    implementation(ktorLibs.server.core)
+    implementation(ktorLibs.serialization.jackson)
+    implementation(ktorLibs.server.netty)
+    implementation(ktorLibs.server.config.yaml)
+    implementation(ktorLibs.server.contentNegotiation)
+    implementation(ktorLibs.server.auth)
+    implementation(ktorLibs.server.auth.jwt)
 
     implementation("org.flywaydb:flyway-core:9.20.0")
     implementation("org.postgresql:postgresql:42.7.2")
@@ -43,6 +45,6 @@ dependencies {
 
     implementation("at.favre.lib:bcrypt:0.10.2")
 
-    testImplementation(libs.ktor.serverTestHost)
+    testImplementation(ktorLibs.server.testHost)
     testImplementation(libs.kotlin.testJunit)
 }
