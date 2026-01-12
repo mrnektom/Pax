@@ -14,9 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
+import org.pax.messenger.ui.navigation.LocalNavigate
+import org.pax.messenger.ui.navigation.Route
 
 @Composable
 fun LoginScreen() {
+    val navigate = LocalNavigate.current
+
     val viewModel: LoginViewModel = koinViewModel()
     val scope = rememberCoroutineScope()
 
@@ -113,8 +117,7 @@ fun LoginScreen() {
                 }
 
                 TextButton(
-                    enabled = false,
-                    onClick = {},
+                    onClick = { navigate.onNavigate(Route.Register) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Register")

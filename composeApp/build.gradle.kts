@@ -40,6 +40,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.material3)
             implementation(compose.foundation)
+            implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
@@ -62,11 +63,11 @@ kotlin {
 
             implementation("androidx.collection:collection:1.5.0")
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.10.0-alpha03")
+
         }
 
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
             implementation(libs.activity.compose)
         }

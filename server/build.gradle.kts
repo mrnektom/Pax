@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinJvm)
-    alias(libs.plugins.ktor)
+    alias(ktorLibs.plugins.ktor)
     application
 }
 
@@ -29,7 +29,6 @@ dependencies {
     implementation(ktorLibs.server.config.yaml)
     implementation(ktorLibs.server.contentNegotiation)
     implementation(ktorLibs.server.auth)
-    implementation(ktorLibs.server.auth.jwt)
 
     implementation("org.flywaydb:flyway-core:9.20.0")
     implementation("org.postgresql:postgresql:42.7.2")

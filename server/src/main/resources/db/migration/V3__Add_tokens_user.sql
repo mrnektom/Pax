@@ -1,0 +1,1 @@
+alter table tokens add column user_id uuid references users(id)

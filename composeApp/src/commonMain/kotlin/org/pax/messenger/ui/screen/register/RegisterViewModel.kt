@@ -1,50 +1,40 @@
-package org.pax.messenger.ui.screen.login
+package org.pax.messenger.ui.screen.register
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import org.koin.android.annotation.KoinViewModel
-import org.pax.messenger.service.AccountsService
 import org.pax.messenger.service.ApiService
-import org.pax.messenger.service.AuthApi
+import org.pax.messenger.ui.screen.login.LoginState
 
 @KoinViewModel
-class LoginViewModel(
-    private val apiService: ApiService,
-    private val accountsService: AccountsService
+class RegisterViewModel(
+    private val apiService: ApiService
 ) : ViewModel() {
     var state by mutableStateOf<LoginState>(LoginState.Idle)
 
-    suspend fun login(
+    suspend fun registerUser(
         host: String,
+        email: String,
         username: String,
         password: String
     ) {
         runCatching {
             state = LoginState.HostCheck
+
             if (apiService.checkApiHost(host)) {
                 state = LoginState.Login
                 val api = apiService.getAuthApi(host)
-                val tokens = api.login(username, password)
+
+                api.createUser(email, username, password)
+
                 state = LoginState.Success
             } else {
                 state = LoginState.InvalidHost
             }
-
         }.onFailure {
             state = LoginState.Failure(it)
-            it.printStackTrace()
         }
     }
-}
-
-sealed class LoginState {
-    data object Idle : LoginState()
-    data object HostCheck : LoginState()
-    data object Login : LoginState()
-    data object Success : LoginState()
-
-    data object InvalidHost : LoginState()
-    data class Failure(val throwable: Throwable) : LoginState()
 }

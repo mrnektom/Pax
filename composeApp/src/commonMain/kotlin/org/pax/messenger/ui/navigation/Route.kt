@@ -11,4 +11,7 @@ sealed class Route : NavKey {
 
     @Serializable
     data object Login : Route()
+
+    @Serializable
+    data object Register : Route()
 }

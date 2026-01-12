@@ -1,6 +1,8 @@
 package org.pax.messenger.service
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -11,10 +13,12 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.takeFrom
 import org.koin.core.annotation.Single
+import org.pax.messenger.TokenPairDto
 import org.pax.messenger.components.defaultHttpClient
 
 @Single
 class ApiService {
+    private val authApis = mutableMapOf<String, AuthApi>()
 
     suspend fun checkApiHost(host: String): Boolean = runCatching {
         val client = defaultHttpClient()
@@ -28,22 +32,49 @@ class ApiService {
 
         return server == "pax-backend"
     }.getOrElse { false }
+
+
+    fun getAuthApi(host: String): AuthApi {
+        return authApis.getOrElse(host) {
+            AuthApi(defaultHttpClient {
+                defaultRequest {
+                    url(host)
+                }
+            })
+        }
+    }
 }
 
 class AuthApi(
     val httpClient: HttpClient
 ) {
-    suspend fun login(
+    suspend fun login(username: String, password: String) = httpClient
+        .post("/v1/tokens") {
+            contentType(ContentType.Application.Json)
+
+            setBody(
+                mapOf(
+                    "username" to username,
+                    "password" to password
+                )
+            )
+        }
+        .body<TokenPairDto>()
+
+    suspend fun createUser(
+        email: String,
         username: String,
         password: String,
-    ) = httpClient.post("/v1/tokens") {
-        contentType(ContentType.Application.Json)
+    ) = httpClient
+        .post("/v1/users") {
+            contentType(ContentType.Application.Json)
 
-        setBody(
-            mapOf(
-                "username" to username,
-                "password" to password
+            setBody(
+                mapOf(
+                    "email" to email,
+                    "username" to username,
+                    "password" to password
+                )
             )
-        )
-    }
+        }
 }

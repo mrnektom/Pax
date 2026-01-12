@@ -5,14 +5,16 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.pax.messenger.TokenPairDto
 import org.pax.messenger.helpers.jsonb
 import java.util.UUID
+import kotlin.time.toKotlinInstant
 
 object Tokens : UUIDTable("tokens") {
     val accessToken = varchar("access_token", 255)
     val refreshToken = varchar("refresh_token", 255)
     val expiresIn = timestamp("expires_in")
-    val metadata = jsonb<Map<String, String>>("metadata")
+    val metadata = jsonb<Map<String, String>>("metadata").default(emptyMap<String, String>())
 }
 
 class Token(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -23,3 +25,9 @@ class Token(id: EntityID<UUID>) : UUIDEntity(id) {
 
     companion object : UUIDEntityClass<Token>(Tokens)
 }
+
+fun Token.toDto() = TokenPairDto(
+    accessToken = accessToken,
+    refreshToken = refreshToken,
+    expiresIn = expiresIn.toKotlinInstant()
+)
